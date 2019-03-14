@@ -60,7 +60,7 @@ int main() {
            	strcat(newpath,b);
 	   	strcat(newpath,type);
            	FILE *sehat=fopen(newpath,"w");
-		fprintf(sehat,"LOLI");
+		fprintf(sehat,"Diet OwO");
            	fclose(sehat);
 		counter++;
 	}
