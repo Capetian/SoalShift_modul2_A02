@@ -44,6 +44,7 @@ int main() {
 	struct stat owo;
         char nama_file[10] = "elen.ku";
         char path[50] = "hatiku/", www[10] = "www-data";
+	chmod (path, 0777);
 
         stat("hatiku/elen.ku", &owo);
         struct passwd *pw = getpwuid(owo.st_uid);
