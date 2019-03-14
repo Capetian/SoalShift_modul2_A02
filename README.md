@@ -11,6 +11,24 @@ Catatan: Tidak boleh menggunakan crontab
 
 Jawab :
 
+Mendeklarasikan variabel yang dibutuhkan :
+
+        struct stat owo;                                  //deklarasi variabel owo
+        char nama_file[10] = "elen.ku";                   //deklarasi variabel nama_file
+        char path[50] = "hatiku/", www[10] = "www-data";  //deklarasi variabel path dan www
+
+setelah itu mengambil info (owner dan group) dari elen.ku
+
+        stat("hatiku/elen.ku", &owo);                     //mengambil info elen.ku dan memasukkannya ke variabel owo
+        struct passwd *pw = getpwuid(owo.st_uid);         //mengambil owner dari owo
+        struct group *gr = getgrgid(owo.st_gid);          //mengambil group dari owo
+        printf("%s %s\n", pw->pw_name, gr->gr_name);
+       
+lalu memeriksa apa group dan owner adalah www-data
+
+        if(strcmp(pw->pw_name, www)==0 && strcmp(gr->gr_name, www)==0){         //memeriksa apakah owner dan group itu ww-data 
+        strcat(path, nama_file);                                                //mengambil file beserta path dari elen.ku
+        remove(path);                                                           //untuk menghapus elen.ku
 
 3.    Diberikan file campur2.zip. Di dalam file tersebut terdapat folder “campur2”. 
 Buatlah program C yang dapat :
