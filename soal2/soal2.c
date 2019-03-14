@@ -42,7 +42,7 @@ int main() {
   while(1) {
     // main program here
 	struct stat owo;
-        char outstr[100], nama_file[10] = "elen.ku";
+        char nama_file[10] = "elen.ku";
         char path[50] = "hatiku/", www[10] = "www-data";
 
         stat("hatiku/elen.ku", &owo);
