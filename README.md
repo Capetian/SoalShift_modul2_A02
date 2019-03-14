@@ -24,6 +24,10 @@ setelah itu mengambil info (owner dan group) dari elen.ku
         struct group *gr = getgrgid(owo.st_gid);          //mengambil group dari owo
         printf("%s %s\n", pw->pw_name, gr->gr_name);
        
+mengubah permission elen.ku menjadi 777 :
+
+	chmod (path, 0777);
+
 lalu memeriksa apa group dan owner adalah www-data
 
         if(strcmp(pw->pw_name, www)==0 && strcmp(gr->gr_name, www)==0){         //memeriksa apakah owner dan group itu ww-data 
