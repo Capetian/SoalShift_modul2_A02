@@ -79,7 +79,7 @@ mengambil data-data yang diperlukan :
 
 memeriksa apakah saat program dijalankan file telah dibuka setidaknya 30 detik sebelumnya :
 
-        if (difftime(bukacoding,bukamakan)<=30) {                               //memeriksa apa jeda waktu antara program dan waktu terakhir file adalah 30 detik
+        	if (difftime(bukacoding,bukamakan)<=30) {                       //memeriksa apa jeda waktu antara program dan waktu terakhir file adalah 30 detik
 
 		char newpath[]="/home/paksi/Documents/makanan/makan_sehat";     //mendeklarasikan newpath untuk membuat makan_sehat.txt
 		char type[]=".txt";                                             
