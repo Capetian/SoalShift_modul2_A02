@@ -19,7 +19,7 @@ int main() {
   char src[] = "/home/bimo/Desktop/testing/";
   char dest[] = "/home/bimo/modul2/";
   char dest2[] = "/home/bimo/modul2/gambar/";
-  char ext[] = "_grey.jpg";
+  char ext[] = "_grey.png";
   pid = fork();
 
   if (pid < 0) {
@@ -82,7 +82,7 @@ int main() {
 
     while ((de = readdir(dr)) != NULL) 
     {
-      if (strstr(de->d_name, ".jpg") != NULL) {
+      if (strstr(de->d_name, ".png") != NULL) {
 
         char newName[256];
         char oldName[256]; 
