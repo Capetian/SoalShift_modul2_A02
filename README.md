@@ -3,13 +3,56 @@
 1.    Elen mempunyai pekerjaan pada studio sebagai fotografer. Suatu hari ada seorang klien yang bernama Kusuma yang meminta untuk mengubah nama file yang memiliki ekstensi .png menjadi “[namafile]_grey.png”. Karena jumlah file yang diberikan Kusuma tidak manusiawi, maka Elen meminta bantuan kalian untuk membuat suatu program C yang dapat mengubah nama secara otomatis dan diletakkan pada direktori /home/[user]/modul2/gambar.
 Catatan : Tidak boleh menggunakan crontab.
 
-Jawab :
+### Jawab :
+Mendeklarasikan variabel yang dibutuhkan :
+```
+  	struct dirent *de;				// pointer untuk mengakses file pada directory
+	DIR   *drd;					// pointer untuk mengkases directory tujuan
+	DIR   *dr;					// pointer untuk mengkases directory asal
+  	char src[] = "/home/bimo/Desktop/testing/";	// path directory asal
+  	char dest[] = "/home/bimo/modul2/";		// path directory tujuan
+	char dest2[] = "/home/bimo/modul2/gambar/";	// path directory tujuan
+	char ext[] = "_grey.png";			// extension yg diinginkan
+	char newName[256];				//variable untuk menyimpan path dan nama file baru
+        char oldName[256]; 				//variable untuk menyimpan path dan nama file lama
+```
 
+Membuat directory tujuan:
+```
+	*drd = opendir(dest2);
+	if (drd == NULL)  				// cek jika directory tujuan ada dengan membuka directory
+	{ 						// jika tujuan tidak ditemukan, buat directory tujuan
+	  ...
+	  execlp("mkdir","mkdir", dest, NULL);		// dengan fork buat directory modul2
+	  ...
+	  execlp("mkdir","mkdir", dest2, NULL);		// dengan fork buat directory gambar
+	  ...
+	else
+	{
+	  closedir(drd); 				// jika tujuan ditemukan, tutup directory		
+	}
+```
+
+Melakukan penggantian nama & directory:
+```
+    DIR *dr = opendir(src);				// buka directory asal
+    ...
+    while ((de = readdir(dr)) != NULL) 			// scan directory asal, pointer "de" menunjuk file yg sedang di-scan
+    {
+      if (strstr(de->d_name, ".png") != NULL) {		// cek jika nama file (disimpan di d_name) yang sedang ditunjuk mengandung ".png"
+        sprintf(oldName,"%s%s", src, de->d_name);	// tambahkan path lama ke nama file
+	sprintf(newName,"%s%s", dest2, de->d_name);	// tambahkan path baru ke nama file
+        int len = strlen(newName) + 1;  
+        memmove(newName +(len-5), ext, strlen(ext)+1);	// gantikan extensi ".png" dengan "_grey.png"
+        rename(oldName,newName);			// pindahkan ke directory baru sekaligus gantikan namanya 
+	...
+```
+Program dalam bentuk daemon, sehingga bisa mengubah nama dan directory secara otomatis saat dimasukkan ke suatu folder.
 
 2.    Pada suatu hari Kusuma dicampakkan oleh Elen karena Elen dimenangkan oleh orang lain. Semua kenangan tentang Elen berada pada file  bernama “elen.ku” pada direktori “hatiku”. Karena sedih berkepanjangan, tugas kalian sebagai teman Kusuma adalah membantunya untuk menghapus semua kenangan tentang Elen dengan membuat program C yang bisa mendeteksi owner dan group dan menghapus file “elen.ku” setiap 3 detik dengan syarat ketika owner dan grupnya menjadi “www-data”. Ternyata kamu memiliki kendala karena permission pada file “elen.ku”. Jadi, ubahlah permissionnya menjadi 777. Setelah kenangan tentang Elen terhapus, maka Kusuma bisa move on.
 Catatan: Tidak boleh menggunakan crontab
 
-Jawab :
+### Jawab :
 
 Mendeklarasikan variabel yang dibutuhkan :
 
@@ -48,7 +91,50 @@ Catatan:
   -Gunakan pipe
   -Pastikan file daftar.txt dapat diakses dari text editor
 
-Jawab :
+### Jawab :
+Tujuan dari program ini adalah untuk melakukan unzip kemudian ls | grep.
+
+Mendeklarasikan variabel yang dibutuhkan :
+```
+  int pipe1[2];				// dibuat untuk membuat pipe. pipe[0] menyimpan input sedangkan pipe[1] menyimpan output
+  int out;				// dibuat untuk membuka file tujuan
+```
+Unzip arsip campur2.zip :
+
+```
+	if ((pid = fork()) == -1) {				// fork untuk melakukan unzip
+	    exit(1);
+	} else if (pid == 0) {
+ 	execlp("unzip", "unzip", "campur2.zip", NULL);		// lakukan unzip pada campur2.zip
+	...
+	while((wait(&status)) > 0);				// parent menunggu sampai unzip selesai
+```
+Siapkan pipe dengan :
+```
+  if (pipe(pipe1) == -1) {
+    exit(1);
+}
+```
+
+Siapkan file output, sehingga output stream dari ls | grep akan masuk ke file tujuan:
+```
+  out = open("daftar.txt",O_CREAT| O_APPEND | O_WRONLY);	// buka file daftar.txt
+  dup2(out,1);							// dup2( , 1) digunakan untuk mengalihkan out ke output stream program ini
+```
+Buat fork untuk melakukan command:
+```
+  if ((pid = fork()) == -1) {					// fork untuk melakukan ls
+    ...
+    dup2(pipe1[1], 1);						// alihkan sisi output pipe ke output stream				
+    execlp("ls", "ls", "./campur2/", NULL);			// lakukan ls pade 
+  ...
+  if ((pid = fork()) == -1) {					// fork untuk melakukan ls
+    dup2(pipe1[0], 0);						// Alihkan sisi input pipe ke input stream, 
+    								// sehingga output dari ls akan menjadi input stream untuk grep.
+    execlp("grep", "grep", ".txt$", NULL);			// Lakukan grep untuk memfilter hasil dari ls sehingga hanya ada
+								// nama file yg mengadung .txt pada akhir nama file tersebut.
+```
+Karena file daftar.txt sudah dialihkan ke output stream program ini, maka hasil dari ls | grep akan dimasukkan ke file tersebut.
 
 
 4.    Dalam direktori /home/[user]/Documents/makanan terdapat file makan_enak.txt yang berisikan daftar makanan terkenal di Surabaya. Elen sedang melakukan diet dan seringkali tergiur untuk membaca isi makan_enak.txt karena ngidam makanan enak. Sebagai teman yang baik, Anda membantu Elen dengan membuat program C yang berjalan setiap 5 detik untuk memeriksa apakah file makan_enak.txt pernah dibuka setidaknya 30 detik yang lalu (rentang 0 - 30 detik).
@@ -62,7 +148,7 @@ Catatan:
   -dilarang menggunakan crontab
   -Contoh nama file : makan_sehat1.txt, makan_sehat2.txt, dst
 
-Jawab :
+### Jawab :
 
 mendeklarasikan counter yang akan digunakan saat membuat file yang baru :
 
@@ -110,4 +196,81 @@ Ket:
 b.Buatlah program c untuk menghentikan program di atas.
 NB: Dilarang menggunakan crontab dan tidak memakai argumen ketika menjalankan program.
 
-Jawab :
+### Jawab :
+
+#### Untuk 5a.
+
+
+Mendeklarasikan variabel yang dibutuhkan :
+```
+    int i=1;					// untuk penamman log
+    int status;
+    time_t t = time(NULL);			// digunakan untuk menyimpan waktu directory dibuat (dalam bentuk detik sejak waktu epoch)
+    struct tm tm = *localtime(&t);		// mengubah waktu menjadi format waktu lokal
+```
+Membuat serta menamakan folder sesuai waktu folder dibuat:
+```
+ 	sprintf(dir_name,"/home/bimo/Desktop/testing/%02d:%02d:%d-%02d:%02d", src,tm.tm_mday,  
+		tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min); 	// namakan folder sesuai format waktu yg diinginkan
+	execlp("mkdir", "mkdir", dir_name, NULL);				// buat folder tersebut
+	...
+	 while((wait(&status)) > 0);						// parent menunggu pembuatan folder selesai
+```
+Membuat log pada folder yang dibuat :
+```
+    for( i = 1; i <=30; i++)							// loop selama 30 x
+    {
+    ...
+      sprintf(file_name,"%s/log%d.txt",dir_name,i);				// namakan file sesuai index 
+      execlp("cp", "cp","/var/log/syslog",file_name, NULL);			// copy dan rename syslog sesuai
+      ...
+      sleep(60);								// sleep agar file dibuat setiap 1 menit
+    }										// setelah 30 x looping 30 menit sudah berlalu
+```
+Karena program yg dibuat dalam bentuk daemon, program akan loop kembali ke awal untuk membuat folder baru dengan log mulai dari log1.log.
+
+#### Untuk 5b.
+Program di atas dapat dimatikan dengan mencari pid program tersebut kemudian melakukan kill dengan signal SIGKILL. Kita bisa mendapatkan pid proses dengan menulusiri /proc, yaitu directory yang menyimpan informasi tentang proses yang sedang berjalan. Pada directory tersebut kita akan mencari proses dengan command yang mengandung nama program yang kita ingin matikan.
+
+
+Mendeklarasikan variabel yang dibutuhkan :
+```
+  struct dirent *de;				// pointer untuk mengscan /proc	
+  DIR *dr = opendir("/proc");			// pointer untuk membuka /proc
+  FILE *fp;					// file pointer untuk membuka /cmdline
+  char *endptr;					// untuk melakukan strtol()
+  char target[] = "soal5";			// yg ingin dimatikan adalah proses ./soal5
+  char exception[] ="soal5b";			// exception agar tidak membunuh diri sendiri
+  long findpid 					// findpid akan menyimpan pid proses
+  char proc[100]; 				// proc akan menyimpan directory ke cmdline suatu proses
+  char *cmp;				
+```
+
+Buka kemudian scan directory /proc dengan:
+```
+ DIR *dr = opendir("/proc");
+ ...
+ while ((de = readdir(dr)) != NULL) 
+```
+Pada directory /proc command disimpan dalam directory /proc/[pid]/cmdline. Oleh karena itu kita dapat mendapatkan pid suatu proses dengan mendapatkan nama folder tersebut.
+```
+	long findpid = strtol(de->d_name, &endptr, 10);			// ubah d_name (yg mengandung pid) menjadi long int, 
+									// findpid akan menyimpan pid proses yang sedang ditinjau
+	sprintf(proc,"/proc/%ld/cmdline",findpid);			// proc akan menyimpan directory ke cmdline suatu proses
+```
+Buka file /cmdline pada folder proses dan cocokan command dengan nama program yg ingin dicari:
+```
+fp = fopen(proc, "r");							// buka cmdline proses
+    if (fp) {
+      fgets(proc,sizeof(proc),fp);
+      if ( (cmp = strstr(proc,target)) != NULL ) {			// cek jika cmdline proses mengandung nama program yg diinginkan
+        if ( (cmp = strstr(proc,exception)) != NULL ) {			// cek jika proses bukan program ini
+          continue;
+        }
+        else
+        {
+          kill((pid_t)findpid, SIGKILL);				// jika cmdline mengandung "soal5" matikan proses
+          break;
+}
+```
+
