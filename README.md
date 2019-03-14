@@ -30,6 +30,10 @@ lalu memeriksa apa group dan owner adalah www-data
         strcat(path, nama_file);                                                //mengambil file beserta path dari elen.ku
         remove(path);                                                           //untuk menghapus elen.ku
 
+lalu membuat agar daemon berjalan setiap 3 detik :
+
+        sleep(3);                                                               //membuat daemon berjalan setiap 3 detik
+
 3.    Diberikan file campur2.zip. Di dalam file tersebut terdapat folder “campur2”. 
 Buatlah program C yang dapat :
 i)  mengekstrak file zip tersebut.
@@ -56,6 +60,42 @@ Catatan:
 
 Jawab :
 
+mendeklarasikan counter yang akan digunakan saat membuat file yang baru :
+
+        int counter=1;                                                          //mendeklarasi counter
+
+mengubah counter yang integer menjadi string :
+
+        char b[4];                                                              //mendeklarasikan b untuk menyimpan counter yang telah diubah 
+	sprintf(b, "%d", counter);                                              //mengubah counter menjadi string
+        
+mengambil data-data yang diperlukan :
+
+	char path[]="/home/paksi/Documents/makanan/makan_enak.txt";             //mendeklarasikan path untuk directory makan_enak.txt
+	struct stat nama_file;                                                  //mendeklarasikan variabel nama_file
+	stat(path, &nama_file);                                                 //mengambil info dari path lalu dimasukkan ke nama_file
+        time_t bukacoding = time(NULL);                                         //mengambil waktu program dijalankan        
+        time_t bukamakan = nama_file.st_atime;                                  //mengambil waktu terakhir kali makan_enak.txt dibuka
+
+memeriksa apakah saat program dijalankan file telah dibuka setidaknya 30 detik sebelumnya :
+
+        if (difftime(bukacoding,bukamakan)<=30) {                               //memeriksa apa jeda waktu antara program dan waktu terakhir file adalah 30 detik
+
+		char newpath[]="/home/paksi/Documents/makanan/makan_sehat";     //mendeklarasikan newpath untuk membuat makan_sehat.txt
+		char type[]=".txt";                                             
+
+membuat file makan_sehat.txt :
+
+           	strcat(newpath,b);                                              //menggabungkan newpath dengan b
+	   	strcat(newpath,type);                                           //menggabungkan newpath yang telah digabung b dengan type
+           	FILE *sehat=fopen(newpath,"w");                                 //membuat file newpath
+		fprintf(sehat,"Diet OwO");                                      //mengisi makan_sehat.txt dengan "Diet OwO"
+           	fclose(sehat);                                                  //menutup makan_sehat.txt
+		counter++;                                                      //menambahkan counter
+
+membuat agar daemon berjalan setiap 5 detik :
+
+        sleep(5);
 
 5.    Kerjakan poin a dan b di bawah:
 a.Buatlah program c untuk mencatat log setiap menit dari file log pada syslog ke /home/[user]/log/[dd:MM:yyyy-hh:mm]/log#.log
