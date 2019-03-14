@@ -53,7 +53,7 @@ int main() {
         time_t bukamakan = nama_file.st_atime;
 
         if (difftime(bukacoding,bukamakan)<=30) {
-;
+
 		char newpath[]="/home/paksi/Documents/makanan/makan_sehat";
 		char type[]=".txt";
 
