@@ -42,8 +42,6 @@ int main ()
       }
       
     }
-    fclose(fp);
   } 
 
-  closedir(dr);
 }
