@@ -47,6 +47,16 @@ Melakukan penggantian nama & directory:
         rename(oldName,newName);			// pindahkan ke directory baru sekaligus gantikan namanya 
 	...
 ```
+### Output:
+
+![picture](/ouput/soal1-1.jpg)
+
+![picture](/ouput/soal1-2.jpg)
+
+![picture](/ouput/soal1-3.jpg)
+
+
+
 Program dalam bentuk daemon, sehingga bisa mengubah nama dan directory secara otomatis saat dimasukkan ke suatu folder.
 
 2.    Pada suatu hari Kusuma dicampakkan oleh Elen karena Elen dimenangkan oleh orang lain. Semua kenangan tentang Elen berada pada file  bernama “elen.ku” pada direktori “hatiku”. Karena sedih berkepanjangan, tugas kalian sebagai teman Kusuma adalah membantunya untuk menghapus semua kenangan tentang Elen dengan membuat program C yang bisa mendeteksi owner dan group dan menghapus file “elen.ku” setiap 3 detik dengan syarat ketika owner dan grupnya menjadi “www-data”. Ternyata kamu memiliki kendala karena permission pada file “elen.ku”. Jadi, ubahlah permissionnya menjadi 777. Setelah kenangan tentang Elen terhapus, maka Kusuma bisa move on.
@@ -80,6 +90,10 @@ lalu memeriksa apa group dan owner adalah www-data
 lalu membuat agar daemon berjalan setiap 3 detik :
 
         sleep(3);                                                               //membuat daemon berjalan setiap 3 detik
+	
+### Output:
+
+![picture](/ouput/soal2.jpg)
 
 3.    Diberikan file campur2.zip. Di dalam file tersebut terdapat folder “campur2”. 
 Buatlah program C yang dapat :
@@ -136,6 +150,13 @@ Buat fork untuk melakukan command:
 ```
 Karena file daftar.txt sudah dialihkan ke output stream program ini, maka hasil dari ls | grep akan dimasukkan ke file tersebut.
 
+### Output:
+
+![picture](/ouput/soal3-1.jpg)
+
+![picture](/ouput/soal3-2.jpg)
+
+![picture](/ouput/soal3-3.jpg)
 
 4.    Dalam direktori /home/[user]/Documents/makanan terdapat file makan_enak.txt yang berisikan daftar makanan terkenal di Surabaya. Elen sedang melakukan diet dan seringkali tergiur untuk membaca isi makan_enak.txt karena ngidam makanan enak. Sebagai teman yang baik, Anda membantu Elen dengan membuat program C yang berjalan setiap 5 detik untuk memeriksa apakah file makan_enak.txt pernah dibuka setidaknya 30 detik yang lalu (rentang 0 - 30 detik).
 Jika file itu pernah dibuka, program Anda akan membuat 1 file makan_sehat#.txt di direktori /home/[user]/Documents/makanan dengan '#' berisi bilangan bulat dari 1 sampai tak hingga untuk mengingatkan Elen agar berdiet.
@@ -187,6 +208,10 @@ membuat agar daemon berjalan setiap 5 detik :
 
         sleep(5);
 
+### Output:
+
+![picture](/ouput/soal4.jpg)
+
 5.    Kerjakan poin a dan b di bawah:
 a.Buatlah program c untuk mencatat log setiap menit dari file log pada syslog ke /home/[user]/log/[dd:MM:yyyy-hh:mm]/log#.log
 Ket:
@@ -228,6 +253,15 @@ Membuat log pada folder yang dibuat :
     }										// setelah 30 x looping 30 menit sudah berlalu
 ```
 Karena program yg dibuat dalam bentuk daemon, program akan loop kembali ke awal untuk membuat folder baru dengan log mulai dari log1.log.
+
+
+#### Output:
+
+![picture](/ouput/soal5-1.jpg)
+
+![picture](/ouput/soal5-2.jpg)
+
+![picture](/ouput/soal5-3.jpg)
 
 #### Untuk 5b.
 Program di atas dapat dimatikan dengan mencari pid program tersebut kemudian melakukan kill dengan signal SIGKILL. Kita bisa mendapatkan pid proses dengan menulusiri /proc, yaitu directory yang menyimpan informasi tentang proses yang sedang berjalan. Pada directory tersebut kita akan mencari proses dengan command yang mengandung nama program yang kita ingin matikan.
@@ -273,4 +307,10 @@ fp = fopen(proc, "r");							// buka cmdline proses
           break;
 }
 ```
+
+
+
+#### Output:
+
+![picture](/ouput/soal5b.jpg)
 
